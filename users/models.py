@@ -56,8 +56,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class TelegramUser(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.PROTECT)
     chat_id = models.BigIntegerField(unique=True)
+
 
     class Meta:
         verbose_name = "Telegram User"
@@ -67,9 +68,13 @@ class TelegramUser(models.Model):
         return f"Telegram user {self.chat_id}"
 
 
+def dict_state():
+    return dict()
+
 class TelegramUserState(models.Model):
     chat_id = models.BigIntegerField(unique=True)
-    logs = models.JSONField(default=dict())
+    logs = models.JSONField(default=dict_state)
+
 
     class Meta:
         verbose_name= "Telegram State"
