@@ -5,8 +5,7 @@ from django.db import models
 from django.contrib.auth.models import PermissionsMixin
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-
-from users.choises import RoleChoises
+from users.choices import RoleChoices
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -24,7 +23,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     fullname = models.CharField(_("full name"), max_length=150, blank=True)
     phone_number = models.CharField(max_length=9, unique=True)
-    role = models.CharField(max_length=123, choices=RoleChoises.choices)
+    role = models.CharField(max_length=150, choices=RoleChoices.choices)
     email = models.EmailField(_("email address"), blank=True)
     is_staff = models.BooleanField(
         _("staff status"),
@@ -59,26 +58,25 @@ class TelegramUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.PROTECT)
     chat_id = models.BigIntegerField(unique=True)
 
-
     class Meta:
         verbose_name = "Telegram User"
         verbose_name_plural = "Telegram Users"
 
     def __str__(self):
-        return f"Telegram user {self.chat_id}"
+        return f"Telegram User №{self.chat_id}"
 
 
-def dict_state():
+def default_logs():
     return dict()
 
-class TelegramUserState(models.Model):
-    chat_id = models.BigIntegerField(unique=True)
-    logs = models.JSONField(default=dict_state)
 
+class TelegramState(models.Model):
+    chat_id = models.BigIntegerField(unique=True)
+    logs = models.JSONField(default=default_logs)
 
     class Meta:
-        verbose_name= "Telegram State"
+        verbose_name = "Telegram State"
         verbose_name_plural = "Telegram States"
 
     def __str__(self):
-        return f"Telegram State {self.chat_id}"
+        return f"Telegram State №{self.chat_id}"
